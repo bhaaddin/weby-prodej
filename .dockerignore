@@ -1,0 +1,7 @@
+node_modules
+public/vendor
+.vercel
+.env*
+Dockerfile
+docker-compose.yml
+*.md

@@ -1,0 +1,20 @@
+{
+  "name": "weby-prodej",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prodejní web: ceník, kalkulačka a poptávkový formulář (Resend)",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node nastroje/sestav.mjs",
+    "start": "node server.mjs",
+    "dev": "node nastroje/sestav.mjs && node server.mjs",
+    "zkouska": "node nastroje/zkouska.mjs",
+    "test": "node nastroje/zkouska.mjs"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@fontsource/space-grotesk": "5.3.0",
+    "three": "0.128.0"
+  }
+}

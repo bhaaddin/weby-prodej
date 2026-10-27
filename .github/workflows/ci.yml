@@ -1,0 +1,84 @@
+# Prodejní web — vše v cloudu, nic na počítači.
+#
+# Každý push a pull request: zkoušky, sestavení, zranitelnosti,
+# Docker image a jeho zkouška (healthcheck, hlavičky, poptávka bez
+# Resendu → 503). Push do hlavní větve navíc publikuje image:
+#   ghcr.io/<vlastník>/weby-prodej:latest (+ tag podle commitu).
+#
+# Vercel nasazuje sám přes svou GitHub integraci; GitHub nepotřebuje
+# žádný token Vercelu ani Resendu.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zkousky:
+    name: zkoušky · sestavení · závislosti
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Sestavení (three.js a písma do public/vendor)
+        run: npm run build
+      - name: Zkoušky
+        run: npm run zkouska
+      - name: Zranitelnosti (high a výš = červená)
+        run: npm audit --omit=dev --audit-level=high
+
+  docker:
+    name: Docker image
+    needs: zkousky
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sestavení image
+        run: docker build -t web-prodej:ci .
+      - name: Zkouška kontejneru (read-only, bez práv)
+        run: |
+          set -e
+          docker run -d --name wp -p 8080:8080 --read-only --cap-drop ALL web-prodej:ci
+          for i in $(seq 1 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' wp)" = healthy ] && break
+            sleep 1
+          done
+          test "$(docker inspect -f '{{.State.Health.Status}}' wp)" = healthy
+          curl -fsS http://127.0.0.1:8080/ | grep -q 'id="data"'
+          curl -fsSI http://127.0.0.1:8080/ | grep -qi "content-security-policy: default-src 'self'"
+          curl -fsS -o /dev/null http://127.0.0.1:8080/vendor/three.min.js
+          curl -fsS -o /dev/null http://127.0.0.1:8080/vendor/fonts.css
+          kod=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'content-type: application/json' \
+            -d '{"jmeno":"CI","email":"ci@example.cz","vyplneno":9000}' http://127.0.0.1:8080/api/poptavka)
+          test "$kod" = 503
+          docker rm -f wp
+      - name: Publikace do ghcr.io (jen hlavní větev)
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          obraz="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/weby-prodej"
+          echo "$GH_TOKEN" | docker login ghcr.io -u '${{ github.actor }}' --password-stdin
+          docker tag web-prodej:ci "$obraz:latest"
+          docker tag web-prodej:ci "$obraz:${GITHUB_SHA::12}"
+          docker push "$obraz:latest"
+          docker push "$obraz:${GITHUB_SHA::12}"

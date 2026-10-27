@@ -1,0 +1,11 @@
+# Pro server (VPS) místo Vercelu: image z GitHubu, proměnné z .env vedle.
+services:
+  weby-prodej:
+    image: ghcr.io/bhaaddin/weby-prodej:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file: .env
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]

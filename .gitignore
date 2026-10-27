@@ -1,0 +1,8 @@
+node_modules/
+# Vzniká při sestavení (npm run build) z node_modules.
+public/vendor/
+.vercel/
+.env*
+
+# Vzor proměnných patří do repozitáře.
+!.env.example
