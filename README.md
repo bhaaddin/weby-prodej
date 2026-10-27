@@ -6,7 +6,8 @@ image; **GitHub** ho zkouší a staví. Nic se nemusí instalovat na počítač 
 všechno se nastavuje klikáním ve webových rozhraních.
 
 ```
-public/index.html   stránka + všechny texty, ceny a kontakty (blok <script id="data">)
+obsah.json          VŠECHNY texty, ceny, kontakty, název značky a údaje firmy
+sablony/            HTML šablony (úvod, ochrana údajů, 404) — plní je obsah.json
 public/app.js       chování webu (kalkulačka, 3D, formulář)
 public/styles.css   vzhled
 api/poptavka.mjs    Vercel Function  POST /api/poptavka
@@ -64,10 +65,20 @@ HTTPS zajistí reverzní proxy před ním (pak `TRUST_PROXY=1`).
 4. Resend → **Emails** ukazuje odeslaný mail a jeho doručení.
 
 ## Úprava textů a cen
-Na GitHubu otevřete `public/index.html` → tužka → upravte JSON
-v `<script id="data">` → **Commit**. Ceny jsou bez DPH, s DPH se dopočítají.
-Obrázky do galerie dejte do `public/` a odkazujte na ně cestou `/…`
-(cizí adresy obrázků CSP nepustí).
+Na GitHubu otevřete `obsah.json` → tužka → upravte → **Commit**. Vercel web
+za minutu sám znovu nasadí. Ceny jsou bez DPH, s DPH se dopočítají.
+
+| Pole | Co to je |
+|---|---|
+| `brand` | název značky (logo, titulek, patička) |
+| `firma.nazev`, `firma.ico`, `firma.adresa`, `firma.email` | údaje do patičky a na stránku Ochrana osobních údajů |
+| `web.domena` | vlastní doména bez `https://` (pro Google a náhledy při sdílení) |
+| `contact` | kontakt na webu (jméno, telefon, e-mail) |
+| `std`, `rez`, `prem` | balíčky: název, cena, popis, funkce |
+
+Překlep, který rozbije JSON, nebo cena napsaná jako text nasazení zastaví
+(Vercel ukáže chybu a běží dál předchozí verze) — web se nerozbije.
+Obrázky do galerie dejte do `public/` a odkazujte na ně cestou `/…`.
 
 ## Bezpečnost
 - CSP bez cizích serverů: three.js i písma jsou z vlastního webu.
@@ -76,3 +87,4 @@ Obrázky do galerie dejte do `public/` a odkazujte na ně cestou `/…`
 - Ochrana proti robotům: skryté pole, minimální doba vyplnění,
   5 poptávek za 10 minut z jedné IP, kontrola `Origin`.
 - Osobní údaje se nelogují; tajemství jen v proměnných Vercelu/serveru.
+- Stránka `/soukromi` (GDPR), žádné cookies ani analytika.

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { zpracujPoptavku, vycistiLimit, overPoptavku } from '../lib/poptavka.mjs';
 import { HLAVICKY } from '../lib/hlavicky.mjs';
 import { vytvorServer } from '../server.mjs';
+import { vypln, jsonDoSkriptu, overObsah, adresaWebu } from './sestav.mjs';
 
 const koren = join(dirname(fileURLToPath(import.meta.url)), '..');
 let ok = 0;
@@ -130,8 +131,19 @@ console.log('server pro Docker');
   const html = await uvod.text();
   over(uvod.status === 200 && html.includes('id="data"') && html.includes('/app.js'), '/ vrací index.html');
   for (const [k, v] of Object.entries(HLAVICKY)) over(uvod.headers.get(k) === v, `hlavička ${k}`);
-  over(!/<script(?![^>]*\b(src=|type="application\/json"))/i.test(html), 'index.html nemá inline skript (CSP script-src self)');
-  over(!/https?:\/\/(?!openapi)/.test(html.replace(/<script id="data"[\s\S]*?<\/script>/, '')), 'index.html nenačítá nic z cizích serverů');
+  over(!/<script(?![^>]*\b(src=|type="application\/(ld\+)?json"))/i.test(html), 'index.html nemá spustitelný inline skript (CSP script-src self)');
+  over(!/(src|href)="https?:\/\//.test(html), 'index.html nenačítá nic z cizích serverů');
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  over(ld['@type'] === 'ProfessionalService' && ld.makesOffer.length === 3, 'strukturovaná data pro Google (3 nabídky)');
+  over(/og:image" content="[^"]*\/og\.png"/.test(html) && /<title>[^<]{10,}<\/title>/.test(html), 'titulek a náhled pro sdílení');
+  const souk = await fetch(zaklad + '/soukromi');
+  const soukT = await souk.text();
+  over(souk.status === 200 && soukT.includes('Ochrana osobních údajů') && soukT.includes('uoou.gov.cz'), '/soukromi: stránka ochrany údajů');
+  const nic = await fetch(zaklad + '/neexistuje');
+  over(nic.status === 404 && (await nic.text()).includes('Zpět na úvod'), 'neznámá adresa → 404 stránka');
+  for (const f of ['/robots.txt', '/manifest.webmanifest', '/og.png', '/apple-touch-icon.png']) {
+    over((await fetch(zaklad + f)).status === 200, `${f} existuje`);
+  }
   const js = await fetch(zaklad + '/app.js');
   over(js.status === 200 && js.headers.get('content-type').startsWith('text/javascript'), '/app.js jako JavaScript');
   const ven = await fetch(zaklad + '/..%2fpackage.json');
@@ -144,6 +156,21 @@ console.log('server pro Docker');
   const del = await fetch(zaklad + '/', { method: 'DELETE' });
   over(del.status === 405, 'DELETE → 405');
   server.close();
+}
+
+console.log('obsah a šablony');
+{
+  over(vypln('<b>{{a}}</b>{{{b}}}', { a: '<x>"', b: '<i>' }) === '<b>&lt;x&gt;&quot;</b><i>', '{{ }} escapuje, {{{ }}} ne');
+  let chyba = '';
+  try { vypln('{{nic}}', {}); } catch (e) { chyba = e.message; }
+  over(chyba.includes('nic'), 'neznámé pole v šabloně zastaví sestavení');
+  over(!jsonDoSkriptu({ t: '</script><!--' }).includes('</'), 'JSON v <script> nejde ukončit');
+  const obsah = JSON.parse(await readFile(join(koren, 'obsah.json'), 'utf8'));
+  over(overObsah(obsah).length === 0, 'obsah.json projde kontrolou');
+  over(overObsah({ ...obsah, std: { ...obsah.std, price: '750' } }).some((c) => c.startsWith('std.price')), 'cena jako text → chyba');
+  over(overObsah({ ...obsah, web: { domena: 'https://x.cz' } }).length === 1, 'doména s https:// → chyba');
+  over(adresaWebu({ web: { domena: '' } }, { VERCEL_PROJECT_PRODUCTION_URL: 'a.vercel.app' }) === 'https://a.vercel.app', 'bez domény adresa z Vercelu');
+  over(adresaWebu({ web: { domena: 'firma.cz' } }, { VERCEL_PROJECT_PRODUCTION_URL: 'a.vercel.app' }) === 'https://firma.cz', 'vlastní doména má přednost');
 }
 
 console.log('Vercel');

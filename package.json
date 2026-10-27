@@ -4,13 +4,15 @@
   "private": true,
   "description": "Prodejní web: ceník, kalkulačka a poptávkový formulář (Resend)",
   "type": "module",
-  "engines": { "node": "22.x" },
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "node nastroje/sestav.mjs",
     "start": "node server.mjs",
     "dev": "node nastroje/sestav.mjs && node server.mjs",
-    "zkouska": "node nastroje/zkouska.mjs",
-    "test": "node nastroje/zkouska.mjs"
+    "zkouska": "npm run build && node nastroje/zkouska.mjs",
+    "test": "npm run build && node nastroje/zkouska.mjs"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "5.3.0",

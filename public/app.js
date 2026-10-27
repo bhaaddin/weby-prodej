@@ -1,13 +1,11 @@
 (function(){
 var dataEl=document.getElementById('data');
 var C=JSON.parse(dataEl.textContent);
-var app=document.getElementById('app'),bar=document.getElementById('bar');
-var ui={plan:'prem',qty:1,vat:false,editing:false,canEdit:false,saving:false};
+var app=document.getElementById('app');
+var ui={plan:'prem',qty:1,vat:false,editing:false};
 var KEYS=['std','rez','prem'];
 var PAL=[{a:'#00E5FF',b:'#FF2D95'},{a:'#B6FF3B',b:'#7A5CFF'},{a:'#FF7A1A',b:'#2D7BFF'},{a:'#FF3B5C',b:'#FFD23B'}];
 var palI=0,accI=0;
-var HEAD='<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>Weby a rezervační systémy</title>\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">';
-var TPL={feat:'Nová položka',steps:{t:'Nový krok',d:'Popis kroku.'},faq:{q:'Nová otázka',a:'Odpověď.'},people:{name:'Jméno',role:'',email:''}};
 var CHECK='<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var ICONS=['<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>','<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>','<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 00-4-4L4 16z"/></svg>'];
 
@@ -17,8 +15,8 @@ function set(p,v){var ks=p.split('.');var l=ks.pop();ks.reduce(function(o,k){ret
 function nf(n){return new Intl.NumberFormat('cs-CZ').format(n)}
 function t(p){return '<span data-path="'+p+'">'+esc(get(p))+'</span>'}
 function n(p){return '<span data-path="'+p+'" data-num="1">'+nf(get(p))+'</span>'}
-function del(path,i){return '<button class="x ed-only" data-del="'+path+'|'+i+'" aria-label="Odebrat">×</button>'}
-function addb(path,label){return '<button class="addb ed-only" data-add="'+path+'">+ '+label+'</button>'}
+function del(){return ''}
+function addb(){return ''}
 function vatOf(k){return Math.round(C[k].price*(1+C.vat/100))}
 function badge(k){var b=C[k].badge;return (b||ui.editing)?'<span class="badge" data-path="'+k+'.badge">'+esc(b)+'</span>':''}
 
@@ -93,18 +91,23 @@ function finale(){
   var ph=C.contact.phone.replace(/\D/g,'');
   return '<section class="sec soft contact" id="kontakt"><div class="wrap"><div><div class="head"><h2>'+t('faqTitle')+'</h2></div><div class="fqs" id="faq">'+
   C.faq.map(function(f,i){return '<div class="fq"><div class="q" role="button" tabindex="0" aria-expanded="false"><span>'+t('faq.'+i+'.q')+'</span></div><div class="a"><p>'+t('faq.'+i+'.a')+' '+del('faq',i)+'</p></div></div>'}).join('')+addb('faq','Přidat otázku')+'</div></div>'+
-  '<div><h2>'+t('contact.title')+'</h2><p class="lead">'+t('contact.lead')+'</p><p class="who2"><b>'+t('contact.name')+'</b> · <span class="muted">'+t('contact.role')+'</span></p><a class="big" href="tel:+420'+esc(ph)+'">'+t('contact.phone')+'</a><a class="big" href="mailto:'+esc(C.contact.email)+'">'+t('contact.email')+'</a>'+soc()+people()+
+  '<div><h2>'+t('contact.title')+'</h2><p class="lead">'+t('contact.lead')+'</p><p class="who2"><b>'+t('contact.name')+'</b> · <span class="muted">'+t('contact.role')+'</span></p><a class="big" href="tel:+420'+esc(ph)+'">'+t('contact.phone')+'</a><a class="big em" href="mailto:'+esc(C.contact.email)+'">'+t('contact.email')+'</a>'+soc()+people()+
   '<form id="f" novalidate style="margin-top:18px"><label>Jméno<input id="fn" autocomplete="name" maxlength="120" required></label><label>E-mail<input id="fe" type="email" autocomplete="email" maxlength="200" required></label><label>Telefon (nepovinné)<input id="ft" type="tel" autocomplete="tel" maxlength="40"></label><label>Škola, akce nebo firma<input id="fs" placeholder="název" maxlength="200"></label>'+
   '<label class="hp" aria-hidden="true">Nevyplňujte<input id="fw" tabindex="-1" autocomplete="off"></label>'+
   '<label>Zájem o<select id="fsel"><option value="std">Standard (jen web)</option><option value="rez">Rezervace (web + online rezervace + skener)</option><option value="prem" selected>Premium (web + online rezervace + skener + platba + AI)</option></select></label>'+
-  '<label>Zpráva<textarea id="fm" maxlength="5000"></textarea></label><button class="btn acc" type="submit" id="fb">Odeslat poptávku</button><p class="fhint" id="fh" role="status" aria-live="polite">Odpovíme na váš e-mail. Údaje použijeme jen k odpovědi.</p></form></div></div></section>';
+  '<label>Zpráva<textarea id="fm" maxlength="5000"></textarea></label><button class="btn acc" type="submit" id="fb">Odeslat poptávku</button><p class="fhint" id="fh" role="status" aria-live="polite">Odesláním souhlasíte, že vaše údaje použijeme jen k odpovědi na poptávku. <a href="/soukromi">Ochrana osobních údajů</a></p></form></div></div></section>';
 }
 function people(){
   C.people=C.people||[];
   if(!C.people.length&&!ui.editing)return '';
   return '<div class="ppl"><h3>'+t('peopleTitle')+'</h3><ul>'+C.people.map(function(c,i){return '<li><b>'+t('people.'+i+'.name')+'</b>'+((c.role||ui.editing)?'<span>'+t('people.'+i+'.role')+'</span>':'')+(ui.editing?'<span>'+t('people.'+i+'.email')+'</span>':(c.email?'<a class="pm" href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a>':''))+del('people',i)+'</li>'}).join('')+'</ul>'+addb('people','Přidat osobu')+'</div>';
 }
-function footer(){return '<footer class="f"><div class="wrap"><span>© 2026 '+esc(C.brand)+'. Všechna práva vyhrazena.</span></div></footer>'}
+function footer(){
+  var F=C.firma||{},kdo=F.nazev||C.brand,bits=[];
+  if(F.ico)bits.push('IČO '+esc(F.ico));if(F.adresa)bits.push(esc(F.adresa));
+  return '<footer class="f"><div class="wrap"><span>© '+new Date().getFullYear()+' '+esc(kdo)+(bits.length?' · '+bits.join(' · '):'')+'</span>'+
+  '<nav class="fl" aria-label="Patička"><a href="#kontakt">Kontakt</a><a href="/soukromi">Ochrana osobních údajů</a></nav></div></footer>';
+}
 
 function render(){
   var y=window.scrollY;
@@ -113,10 +116,6 @@ function render(){
   applyEditable();updateCalc();fillShots();bindPlans();
   var hs=app.querySelectorAll('.head h2');for(var hi=0;hi<hs.length;hi++){hs[hi].classList.add('glitch');hs[hi].setAttribute('data-text',hs[hi].textContent)}
   window.scrollTo({top:y,behavior:'instant'});setTimeout(function(){S3.measure();S3.scroll()},50);
-}
-function renderBar(){
-  if(!ui.canEdit){bar.innerHTML='';return}
-  bar.innerHTML=ui.editing?'<span>Klikněte na text a přepište ho</span><button data-act="cancel"'+(ui.saving?' disabled':'')+'>Zrušit</button><button class="acc" data-act="save"'+(ui.saving?' disabled':'')+'>'+(ui.saving?'Ukládám…':'Uložit změny')+'</button>':'<button data-act="edit">Upravit web</button>';
 }
 function applyEditable(){
   var els=app.querySelectorAll('[data-path]');
@@ -417,10 +416,7 @@ app.addEventListener('click',function(e){
   if((d=tg.closest('[data-go]'))){goTo(d.getAttribute('data-go'));return}
   var an=tg.closest('a[href^="#"]');if(an&&!(ui.editing&&tg.closest('[data-path]'))&&an.getAttribute('href').length>1&&!an.hasAttribute('data-pick')){e.preventDefault();goTo(an.getAttribute('href').slice(1),an.getAttribute('href')==='#spocitat');return}
   if(ui.editing&&tg.closest('a')&&tg.closest('[data-path]'))e.preventDefault();
-  if(tg.closest('[data-upload]')){uploadImg();return}
   if((d=tg.closest('[data-pal]'))){setPal(parseInt(d.getAttribute('data-pal'),10),true);return}
-  if((d=tg.closest('[data-del]'))){var pr=d.getAttribute('data-del').split('|');get(pr[0]).splice(parseInt(pr[1],10),1);render();return}
-  if((d=tg.closest('[data-add]'))){var path=d.getAttribute('data-add'),key=path.split('.').pop();get(path).push(JSON.parse(JSON.stringify(TPL[key])));render();return}
   if((d=tg.closest('[data-pick]'))){e.preventDefault();ui.plan=d.getAttribute('data-pick');updateCalc();goTo('spocitat',true);return}
   if((d=tg.closest('[data-plan]'))){ui.plan=d.getAttribute('data-plan');updateCalc();return}
   if((d=tg.closest('[data-qty]'))){ui.qty=Math.min(50,Math.max(1,ui.qty+parseInt(d.getAttribute('data-qty'),10)));updateCalc();return}
@@ -479,43 +475,8 @@ app.addEventListener('submit',async function(e){
   finally{btn.disabled=false}
 });
 
-/* ---------- edit bar, upload, save ---------- */
+/* ---------- oznámení ---------- */
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},4200)}
-function uploadImg(){
-  var inp=document.createElement('input');inp.type='file';inp.accept='image/*';
-  inp.onchange=async function(){
-    var f=inp.files&&inp.files[0];if(!f)return;
-    try{
-      var as=window.claude?await window.claude.use('assets'):null;
-      if(!as){toast('Nahrávání obrázků tu není dostupné. Pošlete obrázky v chatu.');return}
-      var r=await as.upload(f);C.gallery.push({src:r.url,cap:'Popis'});render();
-    }catch(err){toast('Nahrání se nepovedlo.')}
-  };
-  inp.click();
-}
-function buildHTML(){
-  var json=JSON.stringify(C).replace(/</g,'\\u003c');
-  return '<!doctype html>\n<html lang="cs">\n<head>\n'+HEAD+'\n<style id="css">'+document.getElementById('css').textContent+'</style>\n</head>\n<body>\n<canvas id="sw" aria-hidden="true"></canvas>\n<div id="app"></div>\n<div id="bar" class="bar"></div>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>\n\n<script id="data" type="application/json">'+json+'<\/script>\n\n<script id="code">'+document.getElementById('code').textContent+'<\/script>\n</body>\n</html>';
-}
-bar.addEventListener('click',function(e){
-  var b=e.target.closest('[data-act]');if(!b)return;
-  var a=b.getAttribute('data-act');
-  if(a==='edit'){ui.editing=true;renderBar();render()}
-  if(a==='cancel'){C=JSON.parse(dataEl.textContent);ui.editing=false;renderBar();render()}
-  if(a==='save')save();
-});
-async function save(){
-  var art=window.claude?await window.claude.use('artifact'):null;
-  if(!art){toast('Ukládání tady není dostupné.');return}
-  ui.saving=true;renderBar();
-  try{await art.publish(buildHTML())}
-  catch(err){
-    ui.saving=false;renderBar();
-    if(err&&err.code==='conflict')return;
-    if(err&&(err.code==='not_writer'||err.code==='not_granted')){toast('Tento web může upravovat jen jeho autor.');ui.canEdit=false;ui.editing=false;renderBar();render();return}
-    toast('Uložení se nepovedlo. Zkuste to znovu.');
-  }
-}
 
 render();cssColors(PALS[0][0],PALS[0][1]);S3.init();
 window.addEventListener('load',function(){S3.measure();S3.scroll()});
@@ -524,11 +485,4 @@ setInterval(function(){
   var el=document.getElementById('rot');if(!el)return;
   wi=(wi+1)%WORDS.length;scrambleTo(el,WORDS[wi]);
 },3000);
-(async function(){
-  try{
-    if(!window.claude)return;
-    var u=await window.claude.use('user');
-    if(u&&await u.canEdit()){ui.canEdit=true;renderBar()}
-  }catch(e){}
-})();
 })();

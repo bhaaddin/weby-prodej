@@ -42,14 +42,19 @@ async function staticky(req, res, cesta) {
     return posli(res, 400, { 'Content-Type': 'text/plain; charset=utf-8' }, 'Špatná adresa');
   }
   if (rel.endsWith('/')) rel += 'index.html';
-  const soubor = normalize(join(koren, rel));
+  let soubor = normalize(join(koren, rel));
   // Nic mimo public/ a žádné skryté soubory.
   if (!soubor.startsWith(koren + sep) || soubor.split(sep).some((c) => c.startsWith('.'))) {
-    return posli(res, 404, { 'Content-Type': 'text/plain; charset=utf-8' }, 'Nenalezeno');
+    return nenalezeno(res);
   }
   try {
-    const s = await stat(soubor);
-    if (!s.isFile()) throw new Error('není soubor');
+    // Čisté adresy jako na Vercelu: /soukromi → soukromi.html
+    let s = await stat(soubor).catch(() => null);
+    if (!s && !extname(soubor)) {
+      soubor += '.html';
+      s = await stat(soubor).catch(() => null);
+    }
+    if (!s?.isFile()) throw new Error('není soubor');
     const typ = TYPY[extname(soubor).toLowerCase()] ?? 'application/octet-stream';
     const cache = soubor.includes(`${sep}vendor${sep}`)
       ? 'public, max-age=604800'
@@ -59,8 +64,13 @@ async function staticky(req, res, cesta) {
     const telo = req.method === 'HEAD' ? undefined : await readFile(soubor);
     return posli(res, 200, { 'Content-Type': typ, 'Cache-Control': cache, 'Content-Length': s.size }, telo);
   } catch {
-    return posli(res, 404, { 'Content-Type': 'text/plain; charset=utf-8' }, 'Nenalezeno');
+    return nenalezeno(res);
   }
+}
+
+async function nenalezeno(res) {
+  const stranka = await readFile(join(koren, '404.html')).catch(() => 'Nenalezeno');
+  return posli(res, 404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' }, stranka);
 }
 
 async function poptavka(req, res) {

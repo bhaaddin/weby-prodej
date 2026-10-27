@@ -1,0 +1,157 @@
+{
+  "_napoveda": "Všechny texty, ceny (bez DPH) a kontakty webu. Po uložení na GitHubu se web sám znovu nasadí.",
+  "web": {
+    "domena": "",
+    "titulek": "Weby a rezervační systémy pro plesy, školy a akce",
+    "popis": "Weby, online rezervace, skener vstupenek a platby pro plesy, školy, akce a firmy. Pevná cena, žádné provize, úpravy děláme za vás."
+  },
+  "firma": {
+    "nazev": "",
+    "ico": "",
+    "adresa": "",
+    "email": ""
+  },
+  "brand": "Název",
+  "navcta": "Napsat",
+  "h1": "Weby a rezervační systémy pro vaše akce",
+  "sub": "Vyrábíme čisté a rychlé weby i rezervační a platební systémy. Pevná cena, žádné provize, úpravy děláme za vás.",
+  "c1": "Spočítat cenu",
+  "c2": "Zobrazit ceník",
+  "menuTitle": "Ceník",
+  "menuNote": "Všechny ceny jsou bez DPH. Platí se jednorázově.",
+  "vat": 21,
+  "facts": [
+    {
+      "t": "Pevná cena",
+      "d": "Domluvená cena je konečná. Žádné příplatky."
+    },
+    {
+      "t": "Žádné provize",
+      "d": "Z vašich prodejů si nic nestrháváme."
+    },
+    {
+      "t": "Úpravy za vás",
+      "d": "Obsah webu po spuštění upravujeme my."
+    }
+  ],
+  "plansTitle": "Vyberte si balíček",
+  "plansLead": "Každý další balíček obsahuje vše z předchozího.",
+  "std": {
+    "name": "Standard",
+    "badge": "",
+    "tag": "Jen web",
+    "price": 750,
+    "desc": "Čistý a rychlý web, který vypadá profesionálně.",
+    "feat": [
+      "Čistý a rychlý web",
+      "Funguje na mobilu i počítači",
+      "Datum, program, sponzoři, fotky, kontakty",
+      "Úpravy obsahu děláme za vás"
+    ]
+  },
+  "prem": {
+    "name": "Premium",
+    "badge": "Doporučujeme",
+    "tag": "Web + online rezervace + skener + platba + AI",
+    "price": 4959,
+    "desc": "Rezervace, skener, platby i AI automatizace se řeší samy, vy máte přehled.",
+    "feat": [
+      "Vše z Rezervace",
+      "Skener vstupenek u vstupu",
+      "Platba QR kódem",
+      "Dvoufázové ověření",
+      "Fakturace a doklady",
+      "Tržby v reálném čase",
+      "Vrácení plateb",
+      "AI připomínky a odpovědi"
+    ]
+  },
+  "calcTitle": "Spočítejte si cenu",
+  "calcLead": "Vyberte balíček a počet webů. Cenu vidíte hned, s DPH i bez.",
+  "stepsTitle": "Jak to probíhá",
+  "steps": [
+    {
+      "t": "Napíšete",
+      "d": "Škola, akce nebo firma a co potřebujete."
+    },
+    {
+      "t": "Pošlete podklady",
+      "d": "Logo, texty, fotky, sponzory."
+    },
+    {
+      "t": "Vyrobíme web",
+      "d": "Ukážeme vám ho ke schválení."
+    },
+    {
+      "t": "Spustíme",
+      "d": "Úpravy obsahu potom děláme za vás."
+    }
+  ],
+  "us": {
+    "title": "Kdo za tím stojí",
+    "text": "Vyrábíme lehké a rychlé weby, rezervační a platební systémy. Pevná cena, žádné provize a úpravy děláme za vás.",
+    "name": "Bhaaddin Alkhewani (Baha)",
+    "role": "Tvorba webů a systémů"
+  },
+  "galTitle": "Naše práce",
+  "galLead": "Weby a systémy, které jsme postavili.",
+  "gallery": [],
+  "faqTitle": "Časté otázky",
+  "faq": [
+    {
+      "q": "Co znamená pevná cena?",
+      "a": "Cena, kterou odsouhlasíme, je konečná. Žádné příplatky a žádné provize z prodaných vstupenek."
+    },
+    {
+      "q": "Jsou ceny s DPH?",
+      "a": "Všechny ceny jsou uvedeny bez DPH. DPH se přičítá podle aktuální sazby a v kalkulačce ho vidíte hned."
+    },
+    {
+      "q": "A poplatky platební brány?",
+      "a": "Naše cena zůstává pevná. Pokud použijete platební bránu třetí strany, její poskytovatel si účtuje vlastní poplatky, které nejsou součástí ceny."
+    },
+    {
+      "q": "Můžu web později rozšířit o rezervace nebo platby?",
+      "a": "Ano. Napište nám a domluvíme to."
+    },
+    {
+      "q": "Kdo web upravuje?",
+      "a": "Úpravy obsahu děláme my."
+    }
+  ],
+  "contact": {
+    "title": "Napište nám",
+    "lead": "Stačí pár vět o tom, co potřebujete. Ozveme se.",
+    "phone": "725 532 514",
+    "ig": "",
+    "email": "dygryn_petr@gymnaziumslany.cz",
+    "name": "Petr Dygrýn",
+    "role": "hlavní kontakt"
+  },
+  "peopleTitle": "Vývojáři",
+  "people": [
+    {
+      "name": "Bhaaddin Alkhewani",
+      "role": "Vývojář",
+      "email": ""
+    },
+    {
+      "name": "Viktor (Hoang Tien Long)",
+      "role": "Vývojář",
+      "email": ""
+    }
+  ],
+  "rez": {
+    "name": "Rezervace",
+    "badge": "",
+    "tag": "Web + online rezervace + skener",
+    "price": 2727,
+    "desc": "Hosté si rezervují místa online a vy je u vstupu odbavíte skenerem.",
+    "feat": [
+      "Vše ze Standardu",
+      "Online rezervace míst",
+      "Potvrzení e-mailem nebo SMS",
+      "Skener vstupenek u vstupu"
+    ]
+  }
+}

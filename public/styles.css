@@ -272,14 +272,23 @@ body.editing [data-path]:empty{display:inline-block;min-width:90px;min-height:1.
 body.editing .fq .a{display:block}
 .x{background:var(--acc);color:var(--on-acc);border:0;width:26px;height:26px;border-radius:50%;cursor:pointer;font:600 1rem var(--font);align-items:center;justify-content:center;flex:none}
 .addb{margin-top:10px;border:1.5px dashed var(--acc);color:var(--acc);background:transparent;border-radius:6px;padding:8px 16px;cursor:pointer;font:600 .9rem var(--font)}
-.bar{position:fixed;z-index:80;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center;padding:8px;border-radius:10px;background:#12141f;border:1px solid #2c3042;color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.5);max-width:calc(100% - 20px)}
-.bar:empty{display:none}
-.bar span{padding:0 10px;font-size:.86rem;color:#b9bdd0}
-.bar button{min-height:42px;padding:0 18px;border-radius:6px;border:1.5px solid #3b4058;background:transparent;color:#fff;font:600 .9rem var(--font);cursor:pointer}
-.bar button.acc{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
-.bar button:disabled{opacity:.6;cursor:wait}
 .toast{position:fixed;z-index:90;left:50%;bottom:84px;transform:translateX(-50%);background:#fff;color:#111;padding:12px 18px;border-radius:8px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.4);max-width:calc(100% - 28px)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.gl .glitch::before,.gl .glitch::after{animation:none;opacity:0}}
 
 /* past na roboty: pole vidí jen stroj */
 .hp{position:absolute!important;left:-10000px;width:1px;height:1px;overflow:hidden}
+.contact a.big.em{font-size:clamp(1.05rem,2.1vw,1.5rem);overflow-wrap:anywhere;letter-spacing:-.01em}
+footer.f .fl{display:flex;gap:18px;flex-wrap:wrap}
+footer.f a,.fhint a{color:var(--ink);text-underline-offset:3px}
+footer.f a:hover,.fhint a:hover{color:var(--g1)}
+select{text-overflow:ellipsis}
+/* textové stránky (ochrana údajů, 404) */
+.doc{max-width:46rem;padding:56px 0 72px;min-height:calc(100vh - 150px)}
+.doc h1{font-size:clamp(2rem,4.6vw,3rem);margin-bottom:18px}
+.doc h2{font-size:1.3rem;margin:34px 0 10px;letter-spacing:-.02em}
+.doc p,.doc li{color:var(--muted)}
+.doc p+p{margin-top:12px}
+.doc ul{padding-left:1.2em;margin:8px 0}
+.doc a{color:var(--g1)}
+.doc .meta{font-family:var(--mono);font-size:.8rem;margin-bottom:28px}
+.doc .btn{margin-top:26px;color:#fff}
