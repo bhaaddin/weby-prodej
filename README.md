@@ -53,6 +53,8 @@ soubor `.env` s proměnnými z `.env.example`. Web poběží na portu 8080,
 HTTPS zajistí reverzní proxy před ním (pak `TRUST_PROXY=1`).
 
 ## Ověření, že to funguje
+0. Otevřete `https://<adresa>/api/poptavka` → musí ukázat `{"pripraveno":true}`.
+   `false` = ve Vercelu chybí některá ze tří proměnných (nebo chybí redeploy).
 1. Otevřete adresu z Vercelu → dole formulář → vyplňte jméno, svůj e-mail,
    zprávu → **Odeslat poptávku**.
 2. Čekáno: pod tlačítkem „Děkujeme, poptávka dorazila…" a e-mail na adresu

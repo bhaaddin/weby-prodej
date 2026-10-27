@@ -155,6 +155,15 @@ console.log('Vercel');
   over(v.outputDirectory === 'public' && v.buildCommand === 'npm run build', 'Vercel staví do public/');
   const api = await readFile(join(koren, 'api', 'poptavka.mjs'), 'utf8');
   over(api.includes("from '../lib/poptavka.mjs'") && /export async function POST/.test(api), 'api/poptavka.mjs volá sdílenou logiku');
+  const { GET } = await import('../api/poptavka.mjs');
+  const puvodni = { ...process.env };
+  Object.assign(process.env, ENV);
+  const g = await (await GET()).json();
+  delete process.env.RESEND_API_KEY;
+  const g2 = await (await GET()).json();
+  Object.assign(process.env, puvodni);
+  over(g.pripraveno === true && g2.pripraveno === false, 'GET /api/poptavka hlásí jen ano/ne');
+  over(!JSON.stringify(g).includes('re_test'), 'GET neprozradí klíč');
 }
 
 console.log(`\n${ok} v pořádku, ${spatne} špatně`);

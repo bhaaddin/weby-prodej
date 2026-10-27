@@ -10,9 +10,13 @@ export async function POST(request) {
   return zpracujPoptavku(request, { ip: ip(request) });
 }
 
+// Kontrola z prohlížeče: je Resend nastavený? Jen ano/ne, nikdy hodnoty.
 export function GET() {
-  return new Response(JSON.stringify({ chyba: 'Jen POST.' }), {
-    status: 405,
-    headers: { Allow: 'POST', 'Content-Type': 'application/json; charset=utf-8' },
+  const pripraveno = Boolean(
+    process.env.RESEND_API_KEY?.trim() && process.env.MAIL_FROM?.trim() && process.env.POPTAVKA_KOMU?.trim()
+  );
+  return new Response(JSON.stringify({ pripraveno }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
   });
 }

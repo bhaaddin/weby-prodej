@@ -4,7 +4,7 @@
   "private": true,
   "description": "Prodejní web: ceník, kalkulačka a poptávkový formulář (Resend)",
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": { "node": "22.x" },
   "scripts": {
     "build": "node nastroje/sestav.mjs",
     "start": "node server.mjs",
